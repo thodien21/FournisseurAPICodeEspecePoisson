@@ -19,25 +19,58 @@ namespace APIServiceProposions.Controllers
         }
 
         // GET: api/CodeEspecePoisson/5
-        public CodeEspecePoisson Get(int id)
+        public HttpResponseMessage Get(int id)
         {
             CodeEspecePoissonDAL allpoissons = new CodeEspecePoissonDAL();
-            return allpoissons.GetAllPoisson().FirstOrDefault(p => p.Code_Taxon == id);
+            var poissonDB = allpoissons.GetAllPoisson().Where(p => p.Code_Taxon == id);
+            if (poissonDB == null || poissonDB.Count() == 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Poisson avec code taxon " + id + " non trouvé");
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, poissonDB);
+            }
         }
 
         // POST: api/CodeEspecePoisson
-        public void Post([FromBody]string value)
+        public IEnumerable<CodeEspecePoisson> Post([FromBody]CodeEspecePoisson poisson)
         {
+            CodeEspecePoissonDAL allpoissons = new CodeEspecePoissonDAL();
+            allpoissons.InsertPoisson(poisson);
+            return allpoissons.GetAllPoisson();
         }
 
         // PUT: api/CodeEspecePoisson/5 
-        public void Put(int id, [FromBody]string value)
+        public HttpResponseMessage Put(int id, [FromBody]CodeEspecePoisson poisson)
         {
+            CodeEspecePoissonDAL allpoissons = new CodeEspecePoissonDAL();
+            var poissonDB = allpoissons.GetAllPoisson().Where(p => p.Code_Taxon == id);
+            if (poissonDB == null || poissonDB.Count() == 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Poisson avec code taxon " + id + " non trouvé");
+            }
+            else
+            {
+                allpoissons.UpdatePoissons(id, poisson);
+                return Request.CreateResponse(HttpStatusCode.OK, poisson);
+            }
         }
 
         // DELETE: api/CodeEspecePoisson/5
-        public void Delete(int id)
+        public HttpResponseMessage Delete(int id)
         {
+            CodeEspecePoissonDAL allpoissons = new CodeEspecePoissonDAL();
+            var poissonDB = allpoissons.GetAllPoisson().Where(p => p.Code_Taxon == id);
+            if (poissonDB == null || poissonDB.Count() == 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Poisson avec code taxon " + id + " non trouvé");
+            }
+            else
+            {
+                allpoissons.DeletePoisson(id);
+                return Request.CreateResponse(HttpStatusCode.OK, poissonDB.Count() + " poisson(s) avec code taxon " + id + " supprimé(s)");
+            }
         }
     }
 }

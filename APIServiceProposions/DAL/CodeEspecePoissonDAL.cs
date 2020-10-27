@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 
 namespace APIServiceProposions.DAL
 {
@@ -26,16 +24,78 @@ namespace APIServiceProposions.DAL
                         allpoissons.Add(new CodeEspecePoisson()
                         {
                             Code = (string)reader["code"],
-                            Code_Taxon = (int)reader["code_taxon"],
                             Nom_Commun = (string)reader["nom_commun"],
                             Nom_Latin = (string)reader["nom_latin"],
-                            Statut = (string)reader["statut"],
+                            Code_Taxon = (int)reader["code_taxon"],
                             Uri_Taxon = (string)reader["uri_taxon"],
+                            Statut = (string)reader["statut"]
                         });
                     }
                 }
             }
             return allpoissons;
+        }
+
+        public void InsertPoisson(CodeEspecePoisson poisson)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = sqlConnection.CreateCommand())
+                {
+                    sqlCmd.CommandText = "insert into dbo.CodeEspecePoisson values(@code, @nomcommun, @nomlatin, @codetaxon, @uritaxon, @statut)";
+                    sqlCmd.Parameters.AddWithValue("@code", poisson.Code);
+                    sqlCmd.Parameters.AddWithValue("@nomcommun", poisson.Nom_Commun);
+                    sqlCmd.Parameters.AddWithValue("@nomlatin", poisson.Nom_Latin);
+                    sqlCmd.Parameters.AddWithValue("@codetaxon", poisson.Code_Taxon);
+                    sqlCmd.Parameters.AddWithValue("@uritaxon", poisson.Uri_Taxon);
+                    sqlCmd.Parameters.AddWithValue("@statut", poisson.Statut);
+                    try
+                    {
+                        sqlCmd.ExecuteNonQuery();
+                    }
+                    catch (InvalidCastException e)
+                    {
+                        throw new Exception("Problème d'ordre des valeurs attribuées aux collones : ", e);
+                    }
+                }
+            }
+        }
+
+        public void UpdatePoissons(int id, CodeEspecePoisson poisson)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = sqlConnection.CreateCommand())
+                {
+                    sqlCmd.CommandText = "update dbo.CodeEspecePoisson set code = @code, nom_commun = @nomcommun, " +
+                        "nom_latin = @nomlatin, code_taxon = @codetaxon, uri_taxon = @uritaxon, statut = @statut " +
+                        "where code_taxon = @id";
+                    sqlCmd.Parameters.AddWithValue("@code", poisson.Code);
+                    sqlCmd.Parameters.AddWithValue("@nomcommun", poisson.Nom_Commun);
+                    sqlCmd.Parameters.AddWithValue("@nomlatin", poisson.Nom_Latin);
+                    sqlCmd.Parameters.AddWithValue("@codetaxon", poisson.Code_Taxon);
+                    sqlCmd.Parameters.AddWithValue("@uritaxon", poisson.Uri_Taxon);
+                    sqlCmd.Parameters.AddWithValue("@statut", poisson.Statut);
+                    sqlCmd.Parameters.AddWithValue("@id", id);
+                    sqlCmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeletePoisson(int id)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = sqlConnection.CreateCommand())
+                {
+                    sqlCmd.CommandText = "delete from dbo.CodeEspecePoisson where code_taxon = @id";
+                    sqlCmd.Parameters.AddWithValue("@id", id);
+                    sqlCmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
