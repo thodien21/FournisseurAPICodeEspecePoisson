@@ -12,14 +12,14 @@ namespace APIServiceProposions.Controllers
     public class CodeEspecePoissonController : ApiController
     {
         // GET: api/CodeEspecePoisson
-        public IEnumerable<CodeEspecePoisson> Get()
+        public IEnumerable<CodeEspecePoisson> GetAllFish()
         {
             CodeEspecePoissonDAL allpoissons = new CodeEspecePoissonDAL();
             return allpoissons.GetAllPoisson();
         }
 
         // GET: api/CodeEspecePoisson/5
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get1Fish(int id)
         {
             CodeEspecePoissonDAL allpoissons = new CodeEspecePoissonDAL();
             var poissonDB = allpoissons.GetAllPoisson().Where(p => p.Code_Taxon == id);
@@ -53,7 +53,8 @@ namespace APIServiceProposions.Controllers
             else
             {
                 allpoissons.UpdatePoissons(id, poisson);
-                return Request.CreateResponse(HttpStatusCode.OK, poisson);
+                var newPoissonDb = allpoissons.GetAllPoisson().FirstOrDefault(p => p.Code_Taxon == id);
+                return Request.CreateResponse(HttpStatusCode.OK, newPoissonDb);
             }
         }
 

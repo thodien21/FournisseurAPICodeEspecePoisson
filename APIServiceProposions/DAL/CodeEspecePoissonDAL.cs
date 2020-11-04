@@ -43,11 +43,11 @@ namespace APIServiceProposions.DAL
                 sqlConnection.Open();
                 using (SqlCommand sqlCmd = sqlConnection.CreateCommand())
                 {
-                    sqlCmd.CommandText = "insert into dbo.CodeEspecePoisson values(@code, @nomcommun, @nomlatin, @codetaxon, @uritaxon, @statut)";
+                    sqlCmd.CommandText = "insert into dbo.CodeEspecePoisson values(@codetaxon, @code, @nomcommun, @nomlatin, @uritaxon, @statut)";
+                    sqlCmd.Parameters.AddWithValue("@codetaxon", poisson.Code_Taxon);
                     sqlCmd.Parameters.AddWithValue("@code", poisson.Code);
                     sqlCmd.Parameters.AddWithValue("@nomcommun", poisson.Nom_Commun);
                     sqlCmd.Parameters.AddWithValue("@nomlatin", poisson.Nom_Latin);
-                    sqlCmd.Parameters.AddWithValue("@codetaxon", poisson.Code_Taxon);
                     sqlCmd.Parameters.AddWithValue("@uritaxon", poisson.Uri_Taxon);
                     sqlCmd.Parameters.AddWithValue("@statut", poisson.Statut);
                     try
@@ -70,12 +70,11 @@ namespace APIServiceProposions.DAL
                 using (SqlCommand sqlCmd = sqlConnection.CreateCommand())
                 {
                     sqlCmd.CommandText = "update dbo.CodeEspecePoisson set code = @code, nom_commun = @nomcommun, " +
-                        "nom_latin = @nomlatin, code_taxon = @codetaxon, uri_taxon = @uritaxon, statut = @statut " +
+                        "nom_latin = @nomlatin, uri_taxon = @uritaxon, statut = @statut " +
                         "where code_taxon = @id";
                     sqlCmd.Parameters.AddWithValue("@code", poisson.Code);
                     sqlCmd.Parameters.AddWithValue("@nomcommun", poisson.Nom_Commun);
                     sqlCmd.Parameters.AddWithValue("@nomlatin", poisson.Nom_Latin);
-                    sqlCmd.Parameters.AddWithValue("@codetaxon", poisson.Code_Taxon);
                     sqlCmd.Parameters.AddWithValue("@uritaxon", poisson.Uri_Taxon);
                     sqlCmd.Parameters.AddWithValue("@statut", poisson.Statut);
                     sqlCmd.Parameters.AddWithValue("@id", id);
